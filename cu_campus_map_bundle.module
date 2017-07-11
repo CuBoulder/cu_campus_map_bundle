@@ -1,0 +1,371 @@
+<?php
+
+/**
+ * Implements hook_page_delivery_callback_alter().
+ *
+ * Set frontpage of site to output the basic campus map html.
+ */
+
+function cu_campus_map_bundle_page_delivery_callback_alter(&$delivery_callback) {
+  if (drupal_is_front_page()) {
+    $delivery_callback = 'cu_campus_map_bundle_frontpage';
+  }
+}
+
+/*
+ * Delivery callback for hook__page_delivery_callback_alter().
+ */
+function cu_campus_map_bundle_frontpage($page_callback_result) {
+  $content = include 'templates/campus-map-frontpage.tpl.php';
+  print render($content);
+}
+
+/**
+ * Implements hook_menu().
+ */
+function cu_campus_map_bundle_menu() {
+  $items = array();
+  $items['campus-map-url-builder'] = array(
+    'title' => 'Campus Map URL Builder',
+    'access callback' => TRUE,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cu_campus_map_shortcode_form'),
+  );
+  return $items;
+}
+
+
+function cu_campus_map_shortcode_form($form, &$form_state) {
+
+  //$locations = cu_campus_map_bundle_locations();
+
+  $form = array();
+
+  $form['description'] = array(
+    '#type' => 'markup',
+    '#markup' => '<p>Change the settings below to build a custom map URL</p>
+    <p><em>Make all configuration changes using the fields below and not the campus map preview. Changing locations, zoom level, etc in the preview will not update the custom map url.</em></p>',
+  );
+  global $base_url;
+  $map_base_url = $base_url . '/?id=336';
+  $map_url_default = $map_base_url . '&sbh=1';
+
+
+  // Map Preview.
+  $form['map'] = array(
+    '#type' => 'markup',
+    '#markup' => '<iframe src="' . $map_url_default .'" width="100%" height="600"></iframe>',
+    '#prefix' => '<div id="map-preview">',
+    '#suffix' => '</div>',
+    '#title' => 'Map Preview',
+  );
+
+  // Map URL - textarea because url can get long.
+  $form['map_url'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Map URL',
+    '#default_value' => $map_base_url,
+    '#prefix' => '<div id="map-url">',
+    '#suffix' => '</div>',
+    '#description' => 'You can paste a URL from the campus map here, or begin with the default map.',
+  );
+  $form['map_url']['#ajax'] = cu_campus_map_bundle_ajax_config();
+  // Shortcode for generated map url.
+  $form['map_shortcode'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Map Shortcode',
+    '#prefix' => '<div id="map-shortcode">',
+    '#suffix' => '</div>',
+    '#default_value' => '[map]' . $map_url_default . '[/map]',
+    '#access' => FALSE,
+  );
+
+  // Map Zoom Level - limit to 14-18.
+  $form['zoom_level'] = array(
+    '#type' => 'select',
+    '#title' => 'Zoom Level',
+    '#options' => array(
+      '14' => '0',
+      '15' => '1',
+      '16' => '2',
+      '17' => '3',
+      '18' => '4',
+    ),
+    '#default_value' => '15',
+    '#description' => 'This setting is disabled if a location marker has been chosen.'
+  );
+  $form['zoom_level']['#ajax'] = cu_campus_map_bundle_ajax_config();
+
+  // Center map locations
+  $options = array();
+  $locations = cu_campus_map_bundle_locations();
+  $options['default'] = 'Default';
+  foreach ($locations as $location) {
+    $options[$location['mc']] = $location['name'];
+  }
+  $form['map_center'] = array(
+    '#title' => 'Map Center',
+    '#type' => 'select',
+    '#options' => $options,
+    '#description' => 'Choose a campus location to center the map. This setting is disabled if a location marker has been chosen.'
+  );
+  $form['map_center']['#ajax'] = cu_campus_map_bundle_ajax_config();
+
+
+
+
+  // Add a map marker - current disabled/access false.
+  $options = array();
+  $locations = cu_campus_map_bundle_locations();
+  $options['default'] = 'Default';
+  foreach ($locations as $location) {
+    $options[$location['marker']] = $location['name'];
+  }
+  $form['map_marker'] = array(
+    '#title' => 'Location Marker',
+    '#type' => 'select',
+    '#options' => $options,
+    '#description' => 'Choose a campus location to highlight. The map center option must be set to default.',
+  );
+  $form['map_marker']['#ajax'] = cu_campus_map_bundle_ajax_config();
+  $form['map_marker']['#states'] = array(
+    'visible' => array(
+      'select[name="map_center"]' => array('value' => 'default')
+    ),
+  );
+
+  // Display location details.
+  $form['location_details'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Automatically Open Location Details',
+    '#default_value' => 1,
+  );
+  $form['location_details']['#ajax'] = cu_campus_map_bundle_ajax_config();
+  $form['location_details']['#states'] = array(
+    'visible' => array(
+      'select[name="map_center"]' => array('value' => 'default')
+    ),
+  );
+
+
+
+  // Map embed mode - sidebar display.
+  $form['embed_mode'] = array(
+    '#type' => 'select',
+    '#title' => 'Embed Mode',
+    '#options' => array(
+      'em' => 'Sidebar Hidden',
+      'sbc' => 'Sidebar Closed',
+    ),
+    '#default_value' => 'em',
+    '#description' => 'Choose an embed mode for the map. This settings determines how the map sidebar is displayed.',
+  );
+  $form['embed_mode']['#ajax'] = cu_campus_map_bundle_ajax_config();
+
+  return $form;
+}
+
+/**
+ * Builds map url, map preview.
+ */
+function cu_campus_map_build($form, &$form_state) {
+  $commands = array();
+
+  // Default or inserted URL.
+  $map_url = $form_state['values']['map_url'];
+  // Split the URL into pieces.
+  $url = parse_url($map_url);
+  $query = explode('&', $url['query']);
+  foreach ($query as $key => $value) {
+    if ($value == 'em=1') {
+      unset($query[$key]);
+    }
+  }
+  $url['query'] = join('&', $query);
+  //$fragments = explode('?', $url['fragment']);
+
+  // Split url fragments up by ? and !.
+  $fragments = preg_split('/[?!]/', $url['fragment']);
+
+  // If the fragments can't be split, just add them all as a fragment element.
+  if (empty($fragments)) {
+    $fragments[] = $url['fragment'];
+  }
+
+  // Build categories to add to fragment.
+  $categories = array();
+  foreach ($fragments as $fragment) {
+    if (0 === strpos($fragment, 'ct')) {
+      $categories[] = '?' . $fragment;
+    }
+    elseif (0 === strpos($fragment, 'ce')) {
+      $categories[] = '!' . $fragment;
+    }
+  }
+  // Combine all the fragment elements to add back to the url.
+  $url['fragment'] = join('', $categories);
+  //$url['query'] = 'id=336';
+
+  // Add map coordinates if the map is being centered on a location.
+  if ($form_state['values']['map_center'] != 'default') {
+    $url['fragment'] .= '?mc/' . $form_state['values']['map_center'];
+  }
+  if ($form_state['values']['map_marker'] != 'default') {
+    $url['query'] .= '&mrkIid=' . $form_state['values']['map_marker'];
+    //$url['fragment'] .= '!m/' . $form_state['values']['map_marker'];
+  }
+
+  // Map embed mode.
+  // sbc = sidebar closed, em = embed (no sidebar).
+  if ($form_state['values']['embed_mode'] == 'sbc') {
+    $url['fragment'] .= '?sbc';
+  }
+  else {
+    $url['query'] .= '&em=1';
+  }
+
+  // Close location details.
+  if ($form_state['values']['location_details'] != 1) {
+    $url['query'] .= '&open=0';
+  }
+  // Add map zoom level, but only if a location marker is not set.
+  if (strpos($url['query'], 'mrkIid') === false) {
+    if (!empty($url['fragment'])) {
+      $url['fragment'] .= '?z/' . $form_state['values']['zoom_level'];
+    }
+    else {
+      $url['fragment'] = '?z/' . $form_state['values']['zoom_level'];
+    }
+  }
+
+  // Build urls.
+  $map_url = cu_campus_map_build_url($url, FALSE);
+  $preview_url = cu_campus_map_build_url($url, FALSE);
+
+  // Update form elements for ajax rebuild.
+  $form['map']['#markup'] = '<iframe src="' . $preview_url .'" width="100%" height="600"></iframe>';
+  $form['map_shortcode']['#value'] = '[map]' . $map_url . '[/map]';
+
+  $form['map_url']['#value'] = $map_url;
+
+  $commands[] = ajax_command_replace('#map-shortcode', drupal_render($form['map_shortcode']));
+
+  $commands[] = ajax_command_replace('#map-url', drupal_render($form['map_url']));
+
+  $commands[] = ajax_command_replace('#map-preview', drupal_render($form['map']));
+
+  return array('#type' => 'ajax', '#commands' => $commands);
+}
+
+/**
+ * Combine elements from parse_url() back into a working url.
+ */
+function cu_campus_map_build_url( $parts, $encode=TRUE )
+{
+    if ( $encode )
+    {
+        if ( isset( $parts['user'] ) )
+            $parts['user']     = rawurlencode( $parts['user'] );
+        if ( isset( $parts['pass'] ) )
+            $parts['pass']     = rawurlencode( $parts['pass'] );
+        if ( isset( $parts['host'] ) &&
+            !preg_match( '!^(\[[\da-f.:]+\]])|([\da-f.:]+)$!ui', $parts['host'] ) )
+            $parts['host']     = rawurlencode( $parts['host'] );
+        if ( !empty( $parts['path'] ) )
+            $parts['path']     = preg_replace( '!%2F!ui', '/',
+                rawurlencode( $parts['path'] ) );
+        if ( isset( $parts['query'] ) )
+            $parts['query']    = rawurlencode( $parts['query'] );
+        if ( isset( $parts['fragment'] ) )
+            $parts['fragment'] = rawurlencode( $parts['fragment'] );
+    }
+
+    $url = '';
+    if ( !empty( $parts['scheme'] ) )
+        $url .= $parts['scheme'] . ':';
+    if ( isset( $parts['host'] ) )
+    {
+        $url .= '//';
+        if ( isset( $parts['user'] ) )
+        {
+            $url .= $parts['user'];
+            if ( isset( $parts['pass'] ) )
+                $url .= ':' . $parts['pass'];
+            $url .= '@';
+        }
+        if ( preg_match( '!^[\da-f]*:[\da-f.:]+$!ui', $parts['host'] ) )
+            $url .= '[' . $parts['host'] . ']'; // IPv6
+        else
+            $url .= $parts['host'];             // IPv4 or name
+        if ( isset( $parts['port'] ) )
+            $url .= ':' . $parts['port'];
+        if ( !empty( $parts['path'] ) && $parts['path'][0] != '/' )
+            $url .= '/';
+    }
+    if ( !empty( $parts['path'] ) )
+        $url .= $parts['path'];
+    if ( isset( $parts['query'] ) )
+        $url .= '?' . $parts['query'];
+    if ( isset( $parts['fragment'] ) )
+        $url .= '#' . $parts['fragment'];
+    return $url;
+}
+
+/**
+ * Provide locations for map centering.
+ */
+function cu_campus_map_bundle_locations() {
+
+  // See if this is saved first.
+  $locations = variable_get('campus_map_locations', array());
+
+  if (empty($locations)) {
+    // Get csv data export.
+
+    $data = array_map('str_getcsv', file(drupal_get_path('module', 'cu_campus_map_bundle') . '/data/data.csv'));
+
+    // Location categories to use.
+    $categories = array(
+      'Academic & Research',
+      'Administrative Offices',
+      'Athletics & Recreation',
+      'Housing',
+      'Performance & Museum Venues',
+    );
+
+    // Array keys of the data we want.
+    $keys['name'] = array_search('Name', $data[0]);
+    $keys['category'] = array_search('Category', $data[0]);
+    $keys['latitude'] = array_search('Latitude', $data[0]);
+    $keys['longitude'] = array_search('Longitude', $data[0]);
+    $keys['marker'] = array_search('Marker Instance ID', $data[0]);
+
+    // Remove Column  Labels
+    unset($data[0]);
+    $locations = array();
+
+    // Build array of location data.
+    foreach ($data as $location) {
+      if (in_array($location[$keys['category']], $categories)) {
+        $locations[$location[$keys['marker']]] = array(
+          'name' => $location[$keys['name']],
+          'mc' =>  $location[$keys['latitude']] . ',' . $location[$keys['longitude']],
+          'marker' => $location[$keys['marker']],
+        );
+      }
+    }
+    asort($locations);
+    //$locations = array('default' => 'Default') + $locations;
+
+    variable_set('campus_map_locations', $locations);
+  }
+  return $locations;
+}
+
+function cu_campus_map_bundle_ajax_config() {
+  return array(
+    'callback' => 'cu_campus_map_build',
+    'method' => 'replace',
+    'effect' => 'fade',
+  );
+}
