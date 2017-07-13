@@ -7,8 +7,10 @@
  */
 
 function cu_campus_map_bundle_page_delivery_callback_alter(&$delivery_callback) {
-  if (drupal_is_front_page()) {
-    $delivery_callback = 'cu_campus_map_bundle_frontpage';
+  if (variable_get('campus_map_enable', 0)) {
+    if (drupal_is_front_page()) {
+      $delivery_callback = 'cu_campus_map_bundle_frontpage';
+    }
   }
 }
 
@@ -25,6 +27,12 @@ function cu_campus_map_bundle_frontpage($page_callback_result) {
  */
 function cu_campus_map_bundle_menu() {
   $items = array();
+  $items['admin/config/system/campus-map'] = array(
+    'title' => 'Campus Map Settings',
+    'access arguments' => array('administer campus map settings'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cu_campus_map_bundle_settings_form'),
+  );
   $items['campus-map-url-builder'] = array(
     'title' => 'Campus Map URL Builder',
     'access callback' => TRUE,
@@ -32,6 +40,30 @@ function cu_campus_map_bundle_menu() {
     'page arguments' => array('cu_campus_map_shortcode_form'),
   );
   return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function cu_campus_map_bundle_permission() {
+  return array(
+    'administer campus map settings' => array(
+      'title' => 'Administer Campus Map Settings',
+      'description' => 'Configure embedding the campus map',
+    ),
+  );
+}
+
+function cu_campus_map_bundle_settings_form($form, &$form_state) {
+  $form = array();
+  $form['campus_map_enable'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Enable campus map on front page of this site.',
+    '#default_value' => variable_get('campus_map_enable', 0),
+    '#description' => 'Enabling this will replace the front page on this site with the campus map.',
+  );
+  return system_settings_form($form);
+
 }
 
 
@@ -368,4 +400,16 @@ function cu_campus_map_bundle_ajax_config() {
     'method' => 'replace',
     'effect' => 'fade',
   );
+}
+
+function cu_campus_map_bundle_secure_permissions($role) {
+  $permissions = array(
+    'developer' => array(
+      'administer campus map settings',
+    ),
+  );
+
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
 }
