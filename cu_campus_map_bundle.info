@@ -1,3 +1,5 @@
 name = Campus Map Bundle
 core = 7.x
 version = 7.x-1.0
+
+bundle_group = 'admin_bundles'
