@@ -82,14 +82,13 @@ function cu_campus_map_shortcode_form($form, &$form_state) {
   $map_base_url = $base_url . '/?id=336';
   $map_url_default = $map_base_url . '&sbh=1';
   if (substr($map_url_default, 0, 5) === 'https') {
-    $map_url_default = substr($map_url_default, 5);
+    $map_url_default = substr($map_url_default, 6);
     $map_base_url = substr($map_base_url, 6);
   }
   elseif (substr($map_url_default, 0, 4) === 'http') {
-    $map_url_default = substr($map_url_default, 4);
+    $map_url_default = substr($map_url_default, 5);
     $map_base_url = substr($map_base_url, 5);
   }
-
   // Map Preview.
   $form['map'] = array(
     '#type' => 'markup',
