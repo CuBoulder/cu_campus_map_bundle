@@ -92,7 +92,7 @@ function cu_campus_map_shortcode_form($form, &$form_state) {
   // Map Preview.
   $form['map'] = array(
     '#type' => 'markup',
-    '#markup' => '<iframe src="' . $map_url_default .'" width="100%" height="600"></iframe>',
+    '#markup' => '<iframe src="' . $map_url_default .'" width="100%" height="600" class="campus-map-iframe"></iframe>',
     '#prefix' => '<div id="map-preview">',
     '#suffix' => '</div>',
     '#title' => 'Map Preview',
