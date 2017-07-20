@@ -81,13 +81,9 @@ function cu_campus_map_shortcode_form($form, &$form_state) {
   global $base_url;
   $map_base_url = $base_url . '/?id=336';
   $map_url_default = $map_base_url . '&sbh=1';
-  if (substr($map_url_default, 0, 5) === 'https') {
-    $map_url_default = substr($map_url_default, 6);
-    $map_base_url = substr($map_base_url, 6);
-  }
-  elseif (substr($map_url_default, 0, 4) === 'http') {
-    $map_url_default = substr($map_url_default, 5);
-    $map_base_url = substr($map_base_url, 5);
+  if (substr($map_url_default, 0, 5) === 'http:') {
+    $map_url_default = 'https' . substr($map_url_default, 4);
+    $map_base_url = 'https' . substr($map_base_url, 4);
   }
   // Map Preview.
   $form['map'] = array(
@@ -328,7 +324,7 @@ function cu_campus_map_build_url( $parts, $encode=TRUE )
         // $url .= $parts['scheme'] . ':';
     if ( isset( $parts['host'] ) )
     {
-        $url .= '//';
+        $url .= 'https://';
         if ( isset( $parts['user'] ) )
         {
             $url .= $parts['user'];
