@@ -62,10 +62,28 @@ function cu_campus_map_bundle_settings_form($form, &$form_state) {
     '#default_value' => variable_get('campus_map_enable', 0),
     '#description' => 'Enabling this will replace the front page on this site with the campus map.',
   );
+  $form['map_data'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Map Data',
+    '#description' => 'Delete the saved map data and rebuild from data file.',
+  );
+  $form['map_data']['map_data_rebuild'] = array(
+    '#title' => 'Rebuild Map Data',
+    '#type' => 'submit',
+    '#value' => 'Rebuild Map Data',
+    '#submit' => array('cu_campus_map_bundle_data_rebuild'),
+  );
   return system_settings_form($form);
 
 }
 
+/**
+ * Rebuild Map Data from data file.
+ */
+function cu_campus_map_bundle_data_rebuild($form, &$form_state) {
+  variable_del('campus_map_locations');
+  drupal_set_message('Saved map data was deleted and will be rebuilt.');
+}
 
 function cu_campus_map_shortcode_form($form, &$form_state) {
 
