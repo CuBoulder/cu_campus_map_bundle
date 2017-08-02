@@ -144,9 +144,14 @@ function cu_campus_map_shortcode_form($form, &$form_state) {
       '18' => '4',
     ),
     '#default_value' => '15',
-    '#description' => 'This setting is disabled if a location marker has been chosen.'
+    '#description' => 'This setting is disabled if a location marker has been chosen.',
   );
   $form['zoom_level']['#ajax'] = cu_campus_map_bundle_ajax_config();
+  $form['zoom_level']['#states'] = array(
+    'visible' => array(
+      'select[name="map_marker"]' => array('value' => 'default')
+    ),
+  );
 
   // Center map locations
   $options = array();
@@ -162,7 +167,11 @@ function cu_campus_map_shortcode_form($form, &$form_state) {
     '#description' => 'Choose a campus location to center the map. This setting is disabled if a location marker has been chosen.'
   );
   $form['map_center']['#ajax'] = cu_campus_map_bundle_ajax_config();
-
+  $form['map_center']['#states'] = array(
+    'visible' => array(
+      'select[name="map_marker"]' => array('value' => 'default')
+    ),
+  );
 
 
 
@@ -190,7 +199,7 @@ function cu_campus_map_shortcode_form($form, &$form_state) {
   $form['location_details'] = array(
     '#type' => 'checkbox',
     '#title' => 'Automatically Open Location Details',
-    '#default_value' => 1,
+    '#default_value' => 0,
   );
   $form['location_details']['#ajax'] = cu_campus_map_bundle_ajax_config();
   $form['location_details']['#states'] = array(
@@ -235,6 +244,10 @@ function cu_campus_map_build($form, &$form_state) {
     }
     // Remove marker ids
     if (strpos($value, 'mrkIid') !== false) {
+      unset($query[$key]);
+    }
+    // Remove open details setting
+    if (($value == 'open=0') || ($value == 'open=1')) {
       unset($query[$key]);
     }
   }
@@ -284,6 +297,9 @@ function cu_campus_map_build($form, &$form_state) {
   // Close location details.
   if ($form_state['values']['location_details'] != 1) {
     $url['query'] .= '&open=0';
+  }
+  else {
+    $url['query'] .= '&open=1';
   }
   // Add map zoom level, but only if a location marker is not set.
   if (strpos($url['query'], 'mrkIid') === false) {
