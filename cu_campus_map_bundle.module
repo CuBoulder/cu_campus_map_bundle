@@ -18,8 +18,8 @@ function cu_campus_map_bundle_page_delivery_callback_alter(&$delivery_callback) 
  * Delivery callback for hook__page_delivery_callback_alter().
  */
 function cu_campus_map_bundle_frontpage($page_callback_result) {
-  $content = include 'templates/campus-map-frontpage.tpl.php';
-  print render($content);
+  $content = include('templates/campus-map-frontpage.tpl.php');
+  //print render($content);
 }
 
 /**
