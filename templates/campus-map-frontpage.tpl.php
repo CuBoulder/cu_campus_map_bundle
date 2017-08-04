@@ -14,7 +14,6 @@
           $path = $base_url . '/' . drupal_get_path('module', 'cu_campus_map_bundle');
 
         ?>
-
         <script src="<?php print $path; ?>/js/jquery.min.js"></script>
         <style>
           html, body {
@@ -22,9 +21,13 @@
             margin:0;
             padding:0;
           }
+          .element-invisible { border: 0; height: 1px; overflow: hidden; padding: 0; position: absolute !important; width: 1px; white-space: nowrap; }
         </style>
     </head>
     <body>
+        <div class="element-invisible">
+          CU Boulder is committed to making information available via assistive technologies. The campus map has known issues with certain assistive technologies that we are working with the supplier to resolve.
+        </div>
         <iframe id="map_frame" src="https://myatlascms.com/map/?id=336" width="100%" height="100%" frameBorder="0" scrolling="no" border="0" style="border:0px solid #000; margin:0; padding:0;"><p>Your browser does not support iframes.</p></iframe>
 
       <script type="text/javascript">
@@ -62,10 +65,5 @@
       }
       });
       </script>
-
-
-
-
-
     </body>
 </html>
