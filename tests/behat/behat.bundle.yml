@@ -26,7 +26,7 @@ default:
       api_driver: 'drupal'
       subcontexts:
         paths:
-          - "./sites/all/modules/cu_digital_campaign_bundle/tests/behat"
+          - "./sites/all/modules/cu_campus_map_bundle/tests/behat"
       text:
         username_field: "CU Login Name"
         password_field: "IdentiKey Password"
