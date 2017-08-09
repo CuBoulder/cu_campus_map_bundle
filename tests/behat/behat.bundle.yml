@@ -26,6 +26,7 @@ default:
       api_driver: 'drupal'
       subcontexts:
         paths:
+          # Need to change this for each bundle.
           - "./sites/all/modules/cu_campus_map_bundle/tests/behat"
       text:
         username_field: "CU Login Name"
