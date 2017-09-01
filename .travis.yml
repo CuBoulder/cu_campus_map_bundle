@@ -44,8 +44,9 @@ install:
 
   # Define bundle name so we can use as a placeholder later.
   - BUNDLE_NAME="cu_campus_map_bundle"
+
   # Define test modules to be enabled later.
-  - TEST_MODULES="cu_cm_bundle_tests"
+  - TEST_MODULES="cu_cm_tests"
 
   # Install latest Drush 6.
   - travis_retry composer self-update && composer --version
