@@ -311,6 +311,9 @@ function cu_campus_map_build($form, &$form_state) {
     }
   }
 
+  // Remove top bar for embedding
+  $url['query'] .= '&tbh=1';
+
   // Build urls.
   $map_url = cu_campus_map_build_url($url, FALSE);
   $preview_url = cu_campus_map_build_url($url, FALSE);
