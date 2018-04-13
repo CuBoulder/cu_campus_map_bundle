@@ -66,6 +66,7 @@ install:
   # Copy Express testing stuff into bundle tests folder.
   - cp -R drupal/profiles/express/tests/behat/features drupal/sites/all/modules/$BUNDLE_NAME/tests/behat
   - cp drupal/profiles/express/tests/behat/behat.travis.yml drupal/sites/all/modules/$BUNDLE_NAME/tests/behat
+  - cp drupal/profiles/express/tests/behat/features/bootstrap/FeatureContext.php drupal/sites/all/modules/$BUNDLE_NAME/tests/behat/features/bootstrap
 
   # Build Behat dependencies
   - cd drupal/sites/all/modules/$BUNDLE_NAME/tests/behat
@@ -131,9 +132,6 @@ script:
   - drush en $BUNDLE_NAME -y
 
   # Enable any additional modules used during test runs.
-  - drush en cu_ab_test -y
-  - drush en cu_dc_tests -y
-  - drush cc all
 
   # Run bundle tests
   #- chmod +x ../travis-ci/bundle-tests.sh
