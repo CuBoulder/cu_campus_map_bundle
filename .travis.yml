@@ -37,7 +37,7 @@ install:
   - export BUNDLE_NAME="cu_campus_map_bundle"
   - export ADD_MODULES="cu_cm_tests"
   - export EXPRESS_JS_BEHAT_TAGS="~@exclude_all_bundles&&~@broken&&~@bundle_conflict&&@javascript"
-  - export EXPRESS_HEADLESS_BEHAT_TAGS="~@exclude_all_bundles&&~@broken&&~@javascript&&~@campus_map_bundle_conflict"
+  - export EXPRESS_HEADLESS_BEHAT_TAGS="~@exclude_all_bundles&&~@broken&&~@javascript&&~@testing_frontpage"
   - export BUNDLE_BEHAT_TAGS="~@exclude_all_bundles&&~@broken"
 
   # Clone Express and copy setup scripts to root directory.
