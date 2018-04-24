@@ -34,10 +34,13 @@ install:
   - cd $TRAVIS_BUILD_DIR && cd ../ && export ROOT_DIR=$(pwd)
   - export HOME
   - export TRAVIS_EVENT_TYPE
+
   - export BUNDLE_NAME="cu_campus_map_bundle"
   - export ADD_MODULES="cu_cm_tests"
+
   - export EXPRESS_JS_BEHAT_TAGS="~@exclude_all_bundles&&~@broken&&~@bundle_conflict&&@javascript"
-  - export EXPRESS_HEADLESS_BEHAT_TAGS="~@exclude_all_bundles&&~@broken&&~@javascript&&~@testing_frontpage"
+  # Adding @testing_frontpage and @toolbars exclusions since those conflict with the map being on the front page of the site.
+  - export EXPRESS_HEADLESS_BEHAT_TAGS="~@exclude_all_bundles&&~@broken&&~@javascript&&~@testing_frontpage&&~@toolbars"
   - export BUNDLE_BEHAT_TAGS="~@exclude_all_bundles&&~@broken"
 
   # Clone Express and copy setup scripts to root directory.
