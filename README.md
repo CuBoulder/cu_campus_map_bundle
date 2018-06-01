@@ -2,4 +2,4 @@
 
 **NOTE: To update this repository's codebase, please read: [Releasing Custom Bundle Code](https://github.com/CuBoulder/express_documentation/blob/master/docs/creating_custom_bundles.md#releasing-custom-bundle-code).**
 
-Displays campus map on homepage, includes campus map url builder.
+The Campus Map bundle provides a way to host the Concept3D map in a Web Express site and a front-facing map URL builder.
