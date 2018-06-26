@@ -278,6 +278,9 @@ function cu_campus_map_build($form, &$form_state) {
     // Combine all the fragment elements to add back to the url.
     $url['fragment'] = join('', $categories);
   }
+  else {
+    $url['fragment'] = '';
+  }
   //$url['query'] = 'id=336';
 
   // Add map coordinates if the map is being centered on a location.
