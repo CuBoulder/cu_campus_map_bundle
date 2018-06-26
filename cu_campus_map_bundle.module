@@ -236,44 +236,48 @@ function cu_campus_map_build($form, &$form_state) {
   $map_url = $form_state['values']['map_url'];
   // Split the URL into pieces.
   $url = parse_url($map_url);
-  $query = explode('&', $url['query']);
-  foreach ($query as $key => $value) {
-    // Remove embed setting
-    if ($value == 'em=1') {
-      unset($query[$key]);
+  if (!empty($url['query'])) {
+    $query = explode('&', $url['query']);
+    foreach ($query as $key => $value) {
+      // Remove embed setting
+      if ($value == 'em=1') {
+        unset($query[$key]);
+      }
+      // Remove marker ids
+      if (strpos($value, 'mrkIid') !== false) {
+        unset($query[$key]);
+      }
+      // Remove open details setting
+      if (($value == 'open=0') || ($value == 'open=1')) {
+        unset($query[$key]);
+      }
     }
-    // Remove marker ids
-    if (strpos($value, 'mrkIid') !== false) {
-      unset($query[$key]);
-    }
-    // Remove open details setting
-    if (($value == 'open=0') || ($value == 'open=1')) {
-      unset($query[$key]);
-    }
+    $url['query'] = join('&', $query);
   }
-  $url['query'] = join('&', $query);
   //$fragments = explode('?', $url['fragment']);
 
   // Split url fragments up by ? and !.
-  $fragments = preg_split('/[?!]/', $url['fragment']);
+  if (!empty($url['fragment'])) {
+    $fragments = preg_split('/[?!]/', $url['fragment']);
 
-  // If the fragments can't be split, just add them all as a fragment element.
-  if (empty($fragments)) {
-    $fragments[] = $url['fragment'];
-  }
+    // If the fragments can't be split, just add them all as a fragment element.
+    if (empty($fragments)) {
+      $fragments[] = $url['fragment'];
+    }
 
-  // Build categories to add to fragment.
-  $categories = array();
-  foreach ($fragments as $fragment) {
-    if (0 === strpos($fragment, 'ct')) {
-      $categories[] = '?' . $fragment;
+    // Build categories to add to fragment.
+    $categories = array();
+    foreach ($fragments as $fragment) {
+      if (0 === strpos($fragment, 'ct')) {
+        $categories[] = '?' . $fragment;
+      }
+      elseif (0 === strpos($fragment, 'ce')) {
+        $categories[] = '!' . $fragment;
+      }
     }
-    elseif (0 === strpos($fragment, 'ce')) {
-      $categories[] = '!' . $fragment;
-    }
+    // Combine all the fragment elements to add back to the url.
+    $url['fragment'] = join('', $categories);
   }
-  // Combine all the fragment elements to add back to the url.
-  $url['fragment'] = join('', $categories);
   //$url['query'] = 'id=336';
 
   // Add map coordinates if the map is being centered on a location.
