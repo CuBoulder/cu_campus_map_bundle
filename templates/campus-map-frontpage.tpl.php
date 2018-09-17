@@ -28,7 +28,7 @@
         <div class="element-invisible">
           CU Boulder is committed to making information available via assistive technologies. The campus map has known issues with certain assistive technologies that we are working with the supplier to resolve.
         </div>
-        <iframe id="map_frame" src="https://myatlascms.com/map/?id=336" width="100%" height="100%" frameBorder="0" scrolling="no" border="0" style="border:0px solid #000; margin:0; padding:0;"><p>Your browser does not support iframes.</p></iframe>
+        <iframe id="map_frame" width="100%" height="100%" src="https://map.concept3d.com/?id=336" frameborder="0" scrolling="no" border="0" allow="geolocation"></iframe>
 
       <script type="text/javascript">
       jQuery( document ).ready(function() {
@@ -59,7 +59,7 @@
 
         }
         //append url parameter to iframe
-        var src = 'https://www.myatlascms.com/map/';
+        var src = 'https://map.concept3d.com/';
         src += window.location.search + window.location.hash;
         $('iframe#map_frame').attr( "src", src );
       }
