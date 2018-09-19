@@ -59,7 +59,7 @@
 
         }
         //append url parameter to iframe
-        var src = 'https://www.myatlascms.com/map/';
+         var src = 'https://www.myatlascms.com/map/';
         src += window.location.search + window.location.hash;
         $('iframe#map_frame').attr( "src", src );
       }
