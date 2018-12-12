@@ -55,6 +55,11 @@ function cu_campus_map_bundle_menu() {
     'page callback' => 'cu_campus_map_bundle_location_lookup',
     'delivery callback' =>  'drupal_json_output',
   );
+  $items['map.html'] = array(
+     'access callback' => TRUE,
+     'page arguments' => array(1),
+     'page callback' => 'cu_campus_map_bundle_legacy_location_redirect',
+   );
   return $items;
 }
 
@@ -307,13 +312,31 @@ function cu_campus_map_bundle_location_redirect($location = NULL) {
     $location = strtoupper($location);
     $marker = $locations[$location]['marker'];
     $redirect = $base_url . '?id=336#!m/' . $marker;
-    drupal_goto($redirect);
+    drupal_goto($base_url, array('query' => array('id' => '336'), 'fragment' => '!m/' . $marker));
   }
   else {
 
-    drupal_goto($base_url);
+    return drupal_not_found();
   }
 }
+
+function cu_campus_map_bundle_legacy_location_redirect() {
+   global $base_url;
+   module_load_include('inc', 'cu_campus_map_bundle', 'data/map_data');
+   $locations = cu_campus_map_bundle_data();
+
+   if ($location = $_GET['bldg']) {
+     $location = check_plain($location);
+     $location = strtoupper($location);
+     $marker = $locations[$location]['marker'];
+     $redirect = $base_url . '?id=336#!m/' . $marker;
+     drupal_goto($redirect);
+   }
+   else {
+
+     drupal_goto($base_url);
+   }
+ }
 
 /**
  * Callback function for location-lookup/%
