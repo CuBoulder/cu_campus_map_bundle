@@ -26,7 +26,7 @@
     </head>
     <body>
         <div class="element-invisible">
-          CU Boulder is committed to making information available via assistive technologies. The campus map has known issues with certain assistive technologies that we are working with the supplier to resolve.
+          <p>CU Boulder is committed to making information available via assistive technologies. The campus map has known issues with certain assistive technologies that we are working with the supplier to resolve.</p>
         </div>
         <iframe id="map_frame" width="100%" height="100%" src="https://map.concept3d.com/?id=336" frameborder="0" scrolling="no" border="0" allow="geolocation"></iframe>
 
