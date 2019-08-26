@@ -559,10 +559,6 @@ function cu_campus_map_bundle_data($location = NULL) {
       'marker' => '222210',
     ),
     'VAC' => array(
-      'label' => 'CU Art Museum',
-      'marker' => '202075',
-    ),
-    'VAC' => array(
       'label' => 'Visual Arts Complex',
       'marker' => '193996',
     ),
