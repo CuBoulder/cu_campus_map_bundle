@@ -6,6 +6,10 @@ function cu_campus_map_bundle_data($location = NULL) {
       'label' => 'Aden Hall',
       'marker' => '193791',
     ),
+    'AERO' => array(
+      'label' => 'Aerospace Engineering Sciences',
+      'marker' => '429230',
+    ),
     'ALUM' => array(
       'label' => 'Koenig Alumni Center',
       'marker' => '193918',
