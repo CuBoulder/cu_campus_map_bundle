@@ -171,7 +171,7 @@ function cu_campus_map_bundle_data($location = NULL) {
       'marker' => '193857',
     ),
     'ECCE' => array(
-      'label' => 'Civil Engineering',
+      'label' => 'Civil Engineering Wing',
       'marker' => '193856',
     ),
     'ECCS' => array(
@@ -181,10 +181,30 @@ function cu_campus_map_bundle_data($location = NULL) {
     'ECEE' => array(
       'label' => 'Electrical Engineering Wing',
       'marker' => '193858',
+     ),
+    'ECCR' => array(
+      'label' => 'Engineering Classroom Wing',
+      'marker' => '432490',  
+    ),
+    'ECAD' => array(
+      'label' => 'Engineering Administration Wing',
+      'marker' => '432492',  
     ),
     'ECME' => array(
       'label' => 'Mechanical Engineering Wing',
       'marker' => '193859',
+    ),
+    'ECST' => array(
+      'label' => 'Engineering South Tower',
+      'marker' => '432497',
+    ),
+    'ECSL' => array(
+      'label' => 'Engineering Stores & Labs',
+      'marker' => '432496',  
+    ),
+    'ECES' => array(
+      'label' => 'Environmental Sustainability Wing',
+      'marker' => '193855',    
     ),
     'ECON' => array(
       'label' => 'Economics',
