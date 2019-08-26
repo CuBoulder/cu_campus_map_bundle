@@ -208,7 +208,11 @@ function cu_campus_map_bundle_data($location = NULL) {
     ),
     'ECES' => array(
       'label' => 'Environmental Sustainability Wing',
-      'marker' => '193855',    
+      'marker' => '193855',
+     ),
+    'ECOT' => array(
+      'label' => 'Engineering Office Tower',
+      'marker' => '432491',  
     ),
     'ECON' => array(
       'label' => 'Economics',
