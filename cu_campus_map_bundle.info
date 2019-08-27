@@ -1,6 +1,6 @@
 name = Campus Map Bundle
 description = Displays campus map on homepage, includes campus map url builder.
 core = 7.x
-version = 7.x-1.5
+version = 7.x-1.6
 
 bundle_group = 'admin_bundles'
