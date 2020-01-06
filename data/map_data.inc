@@ -326,6 +326,10 @@ function cu_campus_map_bundle_data($location = NULL) {
       'label' => 'International English Center',
       'marker' => '193909',
     ),
+    'INFO' => array(
+      'label' => 'CMCI Department of Information Science',
+      'marker' => '193981',
+    ),
     'IPRC' => array(
       'label' => 'Indoor Practice Facility',
       'marker' => '204891',
