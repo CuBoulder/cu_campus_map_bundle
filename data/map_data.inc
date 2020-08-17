@@ -230,6 +230,10 @@ function cu_campus_map_bundle_data($location = NULL) {
       'label' => 'Ekeley Science',
       'marker' => '193853',
     ),
+    'EMB' => array(
+      'label' => 'Embassy Suites',
+      'marker' => '510425',
+    ),
     'ENVD' => array(
       'label' => 'Environmental Design',
       'marker' => '193861',
@@ -393,6 +397,10 @@ function cu_campus_map_bundle_data($location = NULL) {
     'MCOL' => array(
       'label' => 'Bruce Curtis Building (Museum Collections)',
       'marker' => '193809',
+    ),
+    'MILL' => array(
+      'label' => 'Millenium Harvest House Hotel',
+      'marker' => '510424',
     ),
     'MKNA' => array(
       'label' => 'McKenna Languages',
