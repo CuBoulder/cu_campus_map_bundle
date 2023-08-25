@@ -390,6 +390,10 @@ function cu_campus_map_bundle_data($location = NULL) {
       'label' => 'Mathematics Building',
       'marker' => '193928',
     ),
+    'MBE' => array(
+      'label' => 'Miramontes Baca Education Building',
+      'marker' => '193871',
+    ),
     'MCKY' => array(
       'label' => 'Macky Auditorium',
       'marker' => '193924',
